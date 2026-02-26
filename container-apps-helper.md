@@ -51,4 +51,34 @@ az containerapp update \
   --resource-group $RESOURCE_GROUP \
   --image $ACR_NAME.azurecr.io/private/nginx:latest
 
+
+
+#
+# New container app
+
+# ── Variables ────────────────────────────────────────────────
+RESOURCE_GROUP="<your-resource-group>"
+LOCATION="<your-location>"                          # e.g. eastus
+ENVIRONMENT="<your-container-app-environment>"
+APP_NAME="<your-container-app-name>"
+ACR_NAME="<your-acr-name>"
+IMAGE="<your-image-name>:<tag>"                     # e.g. myapp:latest
+IDENTITY_ID="<user-assigned-identity-resource-id>"  # full /subscriptions/... path
+TARGET_PORT=80                                       # port your container listens on
+
+
+# ── Deploy the Container App ──────────────────────────────
+az containerapp create \
+  --name $APP_NAME \
+  --resource-group $RESOURCE_GROUP \
+  --environment $ENVIRONMENT \
+  --image $ACR_NAME.azurecr.io/$IMAGE \
+  --user-assigned $IDENTITY_ID \
+  --registry-server $ACR_NAME.azurecr.io \
+  --registry-identity $IDENTITY_ID \
+  --ingress external \
+  --target-port $TARGET_PORT \
+  --min-replicas 1 \
+  --max-replicas 3 
+
 ```  
